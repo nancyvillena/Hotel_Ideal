@@ -30,6 +30,14 @@ public class Habitacion {
         this.id_tipodehabitacion = id_tipodehabitacion;
     }
 
+    public Habitacion(int id_habitacion, int numHabitacion, int piso, boolean estado, TipoDeHabitacion id_tipodehabitacion) {
+        this.id_habitacion = id_habitacion;
+        this.numHabitacion = numHabitacion;
+        this.piso = piso;
+        this.estado = estado;
+        this.id_tipodehabitacion = id_tipodehabitacion;
+    }
+
     public int getId_habitacion() {
         return id_habitacion;
     }

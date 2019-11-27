@@ -18,38 +18,35 @@ import java.util.logging.Logger;
 public class Conexion {
    
    
-     private String url= "jdbc:mysql://localhost/hotelideal";
-    private String usuario= "root";
-    private String password= "";
-    private Connection con = null;
-    
-    public Conexion(){
-        
-        try {    
-            Class.forName("org.mariadb.jdbc.Driver");
-             
-           } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        
-        
-}
+   private String url;
+    private String usuario;
+    private String password;
 
-    public Conexion(String jdbcmysqllocalhosthotelideal, String root, String string) {
+    private Connection conexion;
+    
+    public Conexion(String url, String usuario, String password) throws ClassNotFoundException {
+        this.url = url;
+        this.usuario = usuario;
+        this.password = password;
+
+        //Cargamos las clases de mariadb que implementan JDBC
+        Class.forName("org.mariadb.jdbc.Driver");
+
+    }
+
+    Conexion() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    public Connection getConexion(){
-        //DriverManager es el objeto permite cargar el driver del gestor de BD 
-      try {
-             if (con == null){
-             con = DriverManager.getConnection(url + "?useLegacyDatetimeCode=false&serverTimezone=UTC"
+    
+    public Connection getConexion() throws SQLException{
+        if(conexion == null){
+                    // Setup the connection with the DB
+            conexion = DriverManager
+                .getConnection(url + "?useLegacyDatetimeCode=false&serverTimezone=UTC"
                         + "&user=" + usuario + "&password=" + password);
-          System.out.println("Conexion Exitosa!!!!");
-             }
-         } catch (SQLException ex) {
-             Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
-         }
-       return con;}
+        }
+        return conexion;
+    }
 }
 
 

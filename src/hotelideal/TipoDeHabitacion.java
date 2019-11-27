@@ -35,6 +35,16 @@ public class TipoDeHabitacion {
         this.precioxnoche = precioxnoche;
     }
 
+    public TipoDeHabitacion(int id_tipodehabitacion, int codigo, String tipo, int cantmaxpersonas, int cantcamas, String tipodecama, Double precioxnoche) {
+        this.id_tipodehabitacion = id_tipodehabitacion;
+        this.codigo = codigo;
+        this.tipo = tipo;
+        this.cantmaxpersonas = cantmaxpersonas;
+        this.cantcamas = cantcamas;
+        this.tipodecama = tipodecama;
+        this.precioxnoche = precioxnoche;
+    }
+
     public int getId_tipodehabitacion() {
         return id_tipodehabitacion;
     }

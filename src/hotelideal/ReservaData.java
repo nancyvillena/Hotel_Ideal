@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,8 +27,12 @@ public class ReservaData {
      Connection con=null;
 
     public ReservaData (Conexion conexion) {
-        this.conexion= conexion;
-      con= conexion.getConexion();//obtengo la conexion a la base de datos
+        try {
+            this.conexion= conexion;
+            con= conexion.getConexion();//obtengo la conexion a la base de datos
+        } catch (SQLException ex) {
+            Logger.getLogger(ReservaData.class.getName()).log(Level.SEVERE, null, ex);
+        }
     
 }
     

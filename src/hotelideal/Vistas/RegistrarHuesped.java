@@ -5,17 +5,54 @@
  */
 package hotelideal.Vistas;
 
+import hotelideal.Conexion;
+import hotelideal.Huesped;
+import hotelideal.HuespedData;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nancy
  */
 public class RegistrarHuesped extends javax.swing.JInternalFrame {
+    
+    
+    private String nombre, domicilio,correo;
+    private int dni;
+    private long celular;
+    private int id;
+    private HuespedData huespedData;
+    private Conexion conexion;
+     ArrayList<Huesped> listaHuespedes;
+    DefaultTableModel modelo;
 
     /**
      * Creates new form RegistrarHueped
      */
     public RegistrarHuesped() {
-        initComponents();
+       
+   
+    
+        try {
+            initComponents();
+            conexion=new Conexion("jdbc:mysql://localhost/hotelideal","root","");
+            huespedData=new HuespedData(conexion);
+            modelo=new DefaultTableModel();
+            listaHuespedes=(ArrayList)huespedData.obtenerHuespedes();
+            armaCabezeraTabla();
+            cargaDatos();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(RegistrarHuesped.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    
+    
+    
+    
     }
 
     /**
@@ -46,7 +83,7 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
         jbBorrar = new javax.swing.JButton();
         jbLimpiar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jtRegHuesped = new javax.swing.JTable();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -84,16 +121,41 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
         });
 
         jbGuardar.setText("Guardar");
+        jbGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbGuardarActionPerformed(evt);
+            }
+        });
 
         jbActualizar.setText("Actualizar ");
+        jbActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbActualizarActionPerformed(evt);
+            }
+        });
 
         jbBuscar.setText("Buscar");
+        jbBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbBuscarActionPerformed(evt);
+            }
+        });
 
         jbBorrar.setText("Borrar");
+        jbBorrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbBorrarActionPerformed(evt);
+            }
+        });
 
         jbLimpiar.setText("Limpiar");
+        jbLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbLimpiarActionPerformed(evt);
+            }
+        });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jtRegHuesped.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -104,7 +166,7 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(jtRegHuesped);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -151,7 +213,7 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
                         .addGap(64, 64, 64)
                         .addComponent(jbBuscar)))
                 .addContainerGap(53, Short.MAX_VALUE))
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane2)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,8 +250,9 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
                     .addComponent(jbBuscar)
                     .addComponent(jbBorrar)
                     .addComponent(jbLimpiar))
-                .addGap(44, 44, 44)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -198,6 +261,108 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
     private void jtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtNombreActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jtNombreActionPerformed
+
+    private void jbGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuardarActionPerformed
+        // TODO add your handling code here:
+        
+         nombre=jtNombre.getText();
+        dni=Integer.parseInt(jtDni.getText());
+        domicilio=jtDomicilio.getText();
+        correo=jtCorreo.getText();
+        celular= Long.parseLong(jtCelular.getText());
+
+        //CREACCION DE UN NUEVO HUESPED Y LLAMADA AL METODO guardarHuesped()
+        Huesped huesped=new Huesped(nombre,dni,domicilio,correo,celular);
+        huespedData.guardarHuesped(huesped);
+        JOptionPane.showMessageDialog(null, "Se Guardo Correctamente!!!");
+
+        //LIMPIAR CASILLAS DE TEXTO
+        jtNombre.setText(""); jtDni.setText(""); jtDomicilio.setText("");
+        jtCorreo.setText(""); jtCelular.setText("");
+        listaHuespedes=(ArrayList)huespedData.obtenerHuespedes();
+        cargaDatos();
+    }//GEN-LAST:event_jbGuardarActionPerformed
+
+    private void jbActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbActualizarActionPerformed
+        // TODO add your handling code here:
+         nombre=jtNombre.getText();
+        dni=Integer.parseInt(jtDni.getText());
+        domicilio=jtDomicilio.getText();
+        correo=jtCorreo.getText();
+        celular= Long.parseLong(jtCelular.getText());
+
+        // CREACCION DE UN NUEVO HUESPED Y LLAMADA AL METODO actualizarHuesped()
+        if (!nombre.equalsIgnoreCase("")){
+            Huesped huesped=new Huesped(id,nombre,dni,domicilio,correo,celular);
+            huespedData.actualizarHuesped(huesped);
+            JOptionPane.showMessageDialog(null, "Se Actualizo Correctamente!!!");
+        }
+        // LIMPIAR CASILLAS DE TEXTO
+        jtNombre.setText(""); jtDni.setText(""); jtDomicilio.setText("");
+        jtCorreo.setText(""); jtCelular.setText("");
+
+        // Se bloquean los botones actualizar y borrar
+        jbActualizar.setEnabled(false);
+        jbBorrar.setEnabled(false);
+        listaHuespedes=(ArrayList)huespedData.obtenerHuespedes();
+        cargaDatos();
+        
+    }//GEN-LAST:event_jbActualizarActionPerformed
+
+    private void jbBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarActionPerformed
+        // TODO add your handling code here:
+        String dniBuscar=JOptionPane.showInputDialog("Ingrese DNI del Huesped");
+        if(dniBuscar!=null){
+            int dni=Integer.parseInt(dniBuscar);
+            Huesped huesped=huespedData.buscarHuespedXDni(dni);
+            if(huesped!=null){
+                //Se activa los botones actualizar y borrar
+                jbActualizar.setEnabled(true);
+                jbBorrar.setEnabled(true);
+
+                //TRASPASO DE VARIABLES
+                jtNombre.setText(huesped.getNombre());
+                jtDni.setText(huesped.getDni()+"");
+                jtDomicilio.setText(huesped.getDomicilio());
+                jtCorreo.setText(huesped.getCorreo());
+                jtCelular.setText(huesped.getCelular()+"");
+                id=huesped.getId_huesped();
+            }else{JOptionPane.showMessageDialog(null, "DNI no Encontrado...");}
+        }
+    }//GEN-LAST:event_jbBuscarActionPerformed
+
+    private void jbBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBorrarActionPerformed
+        // TODO add your handling code here:
+        
+        int confirma=JOptionPane.showConfirmDialog(rootPane, "Seguro que desea borrar");
+        if (confirma==0){
+            int dni=Integer.parseInt(jtDni.getText());
+            huespedData.borrarHuespedXDni(dni);
+
+            //LIMPIAR CASILLAS DE TEXTO
+            jtNombre.setText(""); jtDni.setText(""); jtDomicilio.setText("");
+            jtCorreo.setText(""); jtCelular.setText("");
+
+            // Se bloquean los botones actualizar y borrar
+            jbActualizar.setEnabled(false);
+            jbBorrar.setEnabled(false);
+            listaHuespedes=(ArrayList)huespedData.obtenerHuespedes();
+            cargaDatos();
+        }
+        
+    }//GEN-LAST:event_jbBorrarActionPerformed
+
+    private void jbLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimpiarActionPerformed
+        // TODO add your handling code here:
+        jtNombre.setText("");
+        jtDomicilio.setText("");
+        jtCorreo.setText("");
+        jtDni.setText("");
+        jtCelular.setText("");
+        
+        
+        
+    }//GEN-LAST:event_jbLimpiarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -210,7 +375,6 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JButton jbActualizar;
     private javax.swing.JButton jbBorrar;
     private javax.swing.JButton jbBuscar;
@@ -221,5 +385,40 @@ public class RegistrarHuesped extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jtDni;
     private javax.swing.JTextField jtDomicilio;
     private javax.swing.JTextField jtNombre;
+    private javax.swing.JTable jtRegHuesped;
     // End of variables declaration//GEN-END:variables
+
+    private void armaCabezeraTabla() {
+       
+        
+      ArrayList<Object> columnas=new ArrayList<>();
+        
+        columnas.add("Nombre");
+        columnas.add("DNI");
+        columnas.add("Domicilio");
+        columnas.add("Correo");
+        columnas.add("Celular");
+        
+        for (Object it:columnas){
+            modelo.addColumn(it);
+        }
+        jtRegHuesped.setModel(modelo);
+        }
+        
+        public void borraFilasTabla(){
+            int a =modelo.getRowCount()-1;
+            for(int i=a;i>=0;i--){
+                modelo.removeRow(i);
+            }
+        }
+
+//To change body of generated methods, choose Tools | Templates.
+    
+
+    private void cargaDatos() {
+        borraFilasTabla();
+            for (Huesped m:listaHuespedes){
+                modelo.addRow(new Object[]{m.getNombre(),m.getDni(),m.getDomicilio(),m.getCorreo(),m.getCelular()});
+            }
+    }
 }

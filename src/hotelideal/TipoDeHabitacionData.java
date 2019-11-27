@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,7 +25,11 @@ public class TipoDeHabitacionData {
     Connection con=null;
 
     public TipoDeHabitacionData (Conexion conexion) {
-      con= conexion.getConexion();//obtengo la conexion a la base de datos 
+        try {
+            con= conexion.getConexion();//obtengo la conexion a la base de datos 
+        } catch (SQLException ex) {
+            Logger.getLogger(TipoDeHabitacionData.class.getName()).log(Level.SEVERE, null, ex);
+        }
 }
     public void guardarTipoDeHabitacion(TipoDeHabitacion tipoDeHabitacion){
         try {

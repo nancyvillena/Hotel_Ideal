@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,8 +25,12 @@ public class HabitacionData {
      Connection con=null;
 
     public HabitacionData (Conexion conexion) {
-        this.conexion= conexion;
-      con= conexion.getConexion();//obtengo la conexion a la base de datos 
+        try {
+            this.conexion= conexion;
+            con= conexion.getConexion();//obtengo la conexion a la base de datos 
+        } catch (SQLException ex) {
+            Logger.getLogger(HabitacionData.class.getName()).log(Level.SEVERE, null, ex);
+        }
       
     }
     

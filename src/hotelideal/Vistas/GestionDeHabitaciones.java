@@ -5,18 +5,104 @@
  */
 package hotelideal.Vistas;
 
+import hotelideal.Conexion;
+import hotelideal.Habitacion;
+import hotelideal.HabitacionData;
+import hotelideal.ModelaTabla;
+import hotelideal.TipoDeHabitacion;
+import hotelideal.TipoDeHabitacionData;
+import java.beans.PropertyVetoException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nancy
  */
 public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
 
+    private int cantidadHabitaciones;
+    private int id_habitacion;
+    private int numHabitacion;
+    private int piso;
+    private int id_tipodehabitacion;
+    private boolean estado;
+    private TipoDeHabitacionData tipoDeHabitacionData;
+    private HabitacionData habitacionData;
+    private Conexion conexion;
+    ArrayList<TipoDeHabitacion> listaTipoDeHabitaciones;
+    ArrayList<Habitacion> listaHabitaciones;
+    DefaultTableModel modelo;
+    
+    
     /**
      * Creates new form GestionDeHabitaciones
      */
     public GestionDeHabitaciones() {
-        initComponents();
+        try {
+            initComponents();
+            modelo=new DefaultTableModel();
+            
+            conexion=new Conexion("jdbc:mysql://localhost/hotelideal","root","");
+            tipoDeHabitacionData=new TipoDeHabitacionData(conexion);
+            habitacionData=new HabitacionData(conexion);
+            cabezeraTabla();
+            cargaDatos("Estándar simple");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionDeHabitaciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }
+    
+    public void cabezeraTabla(){
+        ArrayList<Object> columnas=new ArrayList<>();
+        
+        columnas.add("Id");
+        columnas.add("Codigo");
+        columnas.add("Tipo Habitacion");
+        columnas.add("Tipo Cama");
+        columnas.add("Nro de Camas");
+        columnas.add("Nro de Personas");
+        columnas.add("Precio por Noche");
+        
+        for (Object it:columnas){
+            modelo.addColumn(it);
+        }
+        tblTipoDeHabitaciones.setModel(modelo);
+        ModelaTabla mt=new ModelaTabla();
+        mt.modelaHabitacion(tblTipoDeHabitaciones);
+    }
+        //******Metodo que borra las filas de la tabla******
+        public void borrarFilasTabla(){
+            int a =modelo.getRowCount()-1;
+            for(int i=a;i>=0;i--){
+                modelo.removeRow(i);
+            }
+        }
+
+        //********Metodo que carga los datos en la tabla********
+        public void cargaDatos(String tipo){
+            listaTipoDeHabitaciones=(ArrayList)tipoDeHabitacionData.obtenerTipoDeHabitaciones();
+            listaHabitaciones=(ArrayList)habitacionData.obtenerHabitaciones();
+            borrarFilasTabla();
+            for (TipoDeHabitacion m:listaTipoDeHabitaciones){
+                if (m.getTipo().equalsIgnoreCase(tipo)){
+                    modelo.addRow(new Object[]{m.getId_tipodehabitacion(),m.getCodigo(),m.getTipo(),m.getTipodecama(),m.getCantcamas(),m.getCantmaxpersonas(),m.getPrecioxnoche()});
+                }
+            }
+            for (Habitacion h:listaHabitaciones){
+                cantidadHabitaciones=h.getNumHabitacion()+1;
+            }
+            if (cantidadHabitaciones==0){
+                cantidadHabitaciones=1;
+                JOptionPane.showMessageDialog(null, cantidadHabitaciones+"");
+            }
+            jtNumHab.setText(cantidadHabitaciones+"");
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -38,17 +124,18 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
         jtPiso = new javax.swing.JTextField();
         cbTipoHab = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblTipoDeHabitaciones = new javax.swing.JTable();
         jbGuardarHab = new javax.swing.JButton();
         jbBuscarHab = new javax.swing.JButton();
         jbActualizarHab = new javax.swing.JButton();
         jbBorrarHab = new javax.swing.JButton();
         jbLimpiarHab = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
 
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/hotelideal/Imagenes/3.jpeg"))); // NOI18N
+        setFrameIcon(null);
 
         jLabel1.setText("HABITACIONES");
 
@@ -61,12 +148,27 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
         jLabel5.setText("Tipo de Habitacion");
 
         chbLibre.setText("Libre");
+        chbLibre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chbLibreActionPerformed(evt);
+            }
+        });
 
         chbOcupada.setText("Ocupada");
+        chbOcupada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chbOcupadaActionPerformed(evt);
+            }
+        });
 
-        cbTipoHab.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbTipoHab.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Estándar simple", "Doble", "Triple", "Suite Lujo" }));
+        cbTipoHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTipoHabActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblTipoDeHabitaciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -77,51 +179,49 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblTipoDeHabitaciones);
 
         jbGuardarHab.setText("Guardar");
+        jbGuardarHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbGuardarHabActionPerformed(evt);
+            }
+        });
 
         jbBuscarHab.setText("Buscar");
+        jbBuscarHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbBuscarHabActionPerformed(evt);
+            }
+        });
 
         jbActualizarHab.setText("Actualizar");
+        jbActualizarHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbActualizarHabActionPerformed(evt);
+            }
+        });
 
         jbBorrarHab.setText("Borrar");
+        jbBorrarHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbBorrarHabActionPerformed(evt);
+            }
+        });
 
         jbLimpiarHab.setText("Limpiar");
+        jbLimpiarHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbLimpiarHabActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Seleccione Habitacion...");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(398, 398, 398)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 18, Short.MAX_VALUE)
-                                .addComponent(jtPiso, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(195, 195, 195))
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cbTipoHab, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(chbLibre)
-                                        .addGap(47, 47, 47)
-                                        .addComponent(chbOcupada)
-                                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jtNumHab, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(215, 215, 215))))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1))
@@ -141,7 +241,35 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
                         .addComponent(jbBorrarHab)
                         .addGap(68, 68, 68)
                         .addComponent(jbLimpiarHab)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(327, 327, 327)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(26, 26, 26)
+                                        .addComponent(chbLibre)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cbTipoHab, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(chbOcupada)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(jtPiso, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jtNumHab, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,16 +286,18 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
                     .addComponent(chbOcupada)
                     .addComponent(jLabel3))
                 .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtPiso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(cbTipoHab, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbGuardarHab)
                     .addComponent(jbBuscarHab)
@@ -180,6 +310,156 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jbGuardarHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuardarHabActionPerformed
+        // TODO add your handling code here:
+        TipoDeHabitacion th;
+        int cel= tblTipoDeHabitaciones.getSelectedRow();
+        //********Consulta que los campos contegan algun valor
+        if (jtNumHab.getText().equals("")||jtPiso.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Debe llenar todos los campos");
+        }else{
+            if (cel!=-1){ //Consulta almenos una fila de la tabla este seleccionada
+                if (chbLibre.isSelected()){
+                    estado=true;
+                }else{estado=false;}
+                id_tipodehabitacion=(int) tblTipoDeHabitaciones.getValueAt(cel, 0);
+                th=new TipoDeHabitacion(id_tipodehabitacion);
+                numHabitacion=Integer.parseInt(jtNumHab.getText());
+                piso=Integer.parseInt(jtPiso.getText());
+                Habitacion habitacion=new Habitacion(numHabitacion,piso,estado,th);
+                habitacionData.guardarHabitacion(habitacion);
+                
+                JOptionPane.showMessageDialog(rootPane, "La Habitacion Nro "+numHabitacion+" se Guardo Correctamente");
+                //*****Limpia el formulario
+                    jtPiso.setText("");
+                    jtNumHab.setText("");
+                    chbLibre.setSelected(false);
+                    chbOcupada.setSelected(false);
+                    cargaDatos("Estándar simple");
+                    cbTipoHab.setSelectedIndex(0);
+            }else{JOptionPane.showMessageDialog(null, "Debe Selecccionar una habitacion de la lista");}
+        }
+        
+        
+        
+    }//GEN-LAST:event_jbGuardarHabActionPerformed
+
+    private void jbBuscarHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarHabActionPerformed
+        // TODO add your handling code here:
+        // se solicita un Nro de habitacion existente en la base de datos
+        String buscarHab=JOptionPane.showInputDialog("Ingrese Nro valido de Habitacion a buscar");
+        if (buscarHab!=null){
+            int busca=Integer.parseInt(buscarHab);
+            Habitacion ha=habitacionData.buscarHabitacion(busca);
+            //*******Consulta que habitacion sea diferente de null para asegurar que devuelva la habiacion deseada
+            if(ha!=null){
+                jtNumHab.setText(ha.getNumHabitacion()+"");
+                if(ha.isEstado()){
+                    chbLibre.setSelected(true);
+                    chbOcupada.setSelected(false);
+                }else{
+                    chbOcupada.setSelected(true);
+                    chbLibre.setSelected(false);
+                }
+                jtPiso.setText(ha.getPiso()+"");
+                id_habitacion=ha.getId_habitacion();
+                String tipo=ha.getId_tipodehabitacion().getTipo();
+                cbTipoHab.setSelectedItem(tipo);
+                borrarFilasTabla();
+                modelo.addRow(new Object[]{ha.getId_tipodehabitacion().getId_tipodehabitacion(),ha.getId_tipodehabitacion().getCodigo(),
+                    ha.getId_tipodehabitacion().getTipo(),ha.getId_tipodehabitacion().getTipodecama(),ha.getId_tipodehabitacion().getCantcamas(),
+                    ha.getId_tipodehabitacion().getCantmaxpersonas(),ha.getId_tipodehabitacion().getPrecioxnoche()});
+            
+            }else{JOptionPane.showMessageDialog(null, " La habitacion no existe");}
+        }
+        
+        
+    }//GEN-LAST:event_jbBuscarHabActionPerformed
+
+    private void jbActualizarHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbActualizarHabActionPerformed
+        // TODO add your handling code here:
+         TipoDeHabitacion  th;
+        int cel=tblTipoDeHabitaciones.getSelectedRow();
+        //Consulta que los campos contegan algun valor
+        
+        if (jtNumHab.getText().equals("")||jtPiso.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Debe Buscar una Habitacion para Modificar");
+            jbGuardarHab.setSelected(false);
+        }else{
+            //*****Consulta almenos una fila de la tabla este seleccionada*********
+            if (cel!=-1){
+                if (chbLibre.isSelected()){
+                    estado=true;
+                }else{estado=false;}
+                numHabitacion=Integer.parseInt(jtNumHab.getText());
+                piso=Integer.parseInt(jtPiso.getText());
+                id_tipodehabitacion=(int) tblTipoDeHabitaciones.getValueAt(cel, 0);
+                th=new TipoDeHabitacion(id_tipodehabitacion);
+                Habitacion habitacion=new Habitacion(id_habitacion,numHabitacion,piso,estado,th);
+                habitacionData.actualizarHabitacion(habitacion);
+                JOptionPane.showMessageDialog(rootPane, "La Habitacion Nro "+numHabitacion+" se Modifico Correctamente");
+                //*****Limpia el formulario
+                    jtNumHab.setText("");
+                    jtPiso.setText("");
+                    chbLibre.setSelected(false);
+                    chbOcupada.setSelected(false);
+                    cargaDatos("Estándar simple");
+                    cbTipoHab.setSelectedIndex(0);
+            }else{JOptionPane.showMessageDialog(null, "Debe Selecccionar Un tipo de habitacion de la lista");}
+        }
+                                         
+        
+    }//GEN-LAST:event_jbActualizarHabActionPerformed
+
+    private void chbLibreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chbLibreActionPerformed
+        // TODO add your handling code here:
+        chbOcupada.setSelected(false);
+    }//GEN-LAST:event_chbLibreActionPerformed
+
+    private void chbOcupadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chbOcupadaActionPerformed
+        // TODO add your handling code here:
+        chbLibre.setSelected(false);
+    }//GEN-LAST:event_chbOcupadaActionPerformed
+
+    private void jbBorrarHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBorrarHabActionPerformed
+        // TODO add your handling code here:
+          if (jtNumHab.getText().equals("")||jtPiso.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Debe Buscar una Habitacion para Borrar");
+        }else{
+            int confirma=JOptionPane.showConfirmDialog(rootPane, "Seguro que desea borrar esta habitacion");
+            if (confirma==0){
+                int numero=Integer.parseInt(jtNumHab.getText());
+                habitacionData.borrarHabitacionXNumero(numero);
+
+                //LIMPIAR FORMULARIO
+                    JOptionPane.showMessageDialog(rootPane, "La Habitacion Nro "+numero+" se Borro Correctamente");
+                    jtNumHab.setText("");
+                    jtPiso.setText("");
+                    chbLibre.setSelected(false);
+                    chbOcupada.setSelected(false);
+                    cargaDatos("Estándar simple");
+                    cbTipoHab.setSelectedIndex(0);
+            }   
+        }
+    }//GEN-LAST:event_jbBorrarHabActionPerformed
+
+    private void cbTipoHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoHabActionPerformed
+        // TODO add your handling code here:
+        String tipo;
+        tipo=(String)cbTipoHab.getSelectedItem();
+        borrarFilasTabla();
+        cargaDatos(tipo);
+    }//GEN-LAST:event_cbTipoHabActionPerformed
+
+    private void jbLimpiarHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimpiarHabActionPerformed
+        // TODO add your handling code here:
+                    jtNumHab.setText("");
+                    jtPiso.setText("");
+                    chbLibre.setSelected(false);
+                    chbOcupada.setSelected(false);
+        
+    }//GEN-LAST:event_jbLimpiarHabActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbTipoHab;
@@ -190,8 +470,8 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JButton jbActualizarHab;
     private javax.swing.JButton jbBorrarHab;
     private javax.swing.JButton jbBuscarHab;
@@ -199,5 +479,6 @@ public class GestionDeHabitaciones extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbLimpiarHab;
     private javax.swing.JTextField jtNumHab;
     private javax.swing.JTextField jtPiso;
+    private javax.swing.JTable tblTipoDeHabitaciones;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,18 +5,86 @@
  */
 package hotelideal.Vistas;
 
+import hotelideal.Conexion;
+import hotelideal.ModelaTabla;
+import hotelideal.TipoDeHabitacionData;
+import hotelideal.TipoDeHabitacion;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nancy
  */
-public class TipoDeHabitacion extends javax.swing.JInternalFrame {
+public class VistaTipoDeHabitacion extends javax.swing.JInternalFrame {
 
+    private int id_tipodehabitacion;
+    private int codigo;
+    private String tipo;
+    private Double precioxnoche;
+    private int cantmaxpersonas;
+    private int cantcamas;
+    private String tipodecama;
+    private TipoDeHabitacionData tipoDeHabitacionData;
+    private Conexion conexion;
+    ArrayList<TipoDeHabitacion> listaTipoDeHabitaciones;
+    DefaultTableModel modelo;
     /**
      * Creates new form TipoDeHabitacion
      */
-    public TipoDeHabitacion() {
-        initComponents();
+    public VistaTipoDeHabitacion() {
+        try {
+            initComponents();
+            conexion = new Conexion("jdbc:mysql://localhost/hotelideal", "root", "");
+            tipoDeHabitacionData = new TipoDeHabitacionData(conexion);
+            modelo=new DefaultTableModel();
+            cabezeraTabla();
+            cargarDatos();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaTipoDeHabitacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    
+     public void cabezeraTabla(){
+        ArrayList<Object> columnas=new ArrayList<>();
+        
+        columnas.add("Id");
+        columnas.add("Codigo");
+        columnas.add("Tipo Habitacion");
+        columnas.add("Nro de Personas"); 
+        columnas.add("Nro de Camas");
+        columnas.add("Tipo Cama");
+        columnas.add("Precio por Noche");
+        
+        for (Object it:columnas){
+            modelo.addColumn(it);
+        }
+        tblTiposHabitaciones.setModel(modelo);
+        ModelaTabla mt=new ModelaTabla();
+        mt.modelaHabitacion(tblTiposHabitaciones);
+    }
+        
+        //******Metodo que borra las filas de la tabla******
+        public void borrarFilasTabla(){
+            int a =modelo.getRowCount()-1;
+            for(int i=a;i>=0;i--){
+                modelo.removeRow(i);
+            }
+        }
+
+        //********Metodo que carga los datos en la tabla********
+        public void cargarDatos(){
+            listaTipoDeHabitaciones=(ArrayList)tipoDeHabitacionData.obtenerTipoDeHabitaciones();
+
+            borrarFilasTabla();
+            for (TipoDeHabitacion m:listaTipoDeHabitaciones){
+              modelo.addRow(new Object[]{m.getId_tipodehabitacion(),m.getCodigo(),m.getTipo(),m.getCantmaxpersonas(),m.getCantcamas(),m.getTipodecama(),m.getPrecioxnoche()});
+            }
+            
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,7 +112,7 @@ public class TipoDeHabitacion extends javax.swing.JInternalFrame {
         jbBuscarTH = new javax.swing.JButton();
         jbActualizarPrecio = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblTiposHabitaciones = new javax.swing.JTable();
 
         setClosable(true);
         setIconifiable(true);
@@ -70,17 +138,32 @@ public class TipoDeHabitacion extends javax.swing.JInternalFrame {
             }
         });
 
-        cbTipoDeHab.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbTipoDeHab.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Estándar simple", "Doble", "Triple", "Suite Lujo" }));
 
-        cbTipoCama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbTipoCama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Simples", "Queen", "King Size" }));
 
         jbGuardarTH.setText("Guardar");
+        jbGuardarTH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbGuardarTHActionPerformed(evt);
+            }
+        });
 
         jbBuscarTH.setText("Buscar");
+        jbBuscarTH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbBuscarTHActionPerformed(evt);
+            }
+        });
 
         jbActualizarPrecio.setText("Actualizar Precio");
+        jbActualizarPrecio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbActualizarPrecioActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblTiposHabitaciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -91,7 +174,7 @@ public class TipoDeHabitacion extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblTiposHabitaciones);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -184,6 +267,82 @@ public class TipoDeHabitacion extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jtCantCamasActionPerformed
 
+    private void jbGuardarTHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuardarTHActionPerformed
+        // TODO add your handling code here:
+        
+        codigo = Integer.parseInt(jtCodigo.getText());
+        tipo = (String) cbTipoDeHab.getSelectedItem();       
+        cantmaxpersonas= Integer.parseInt(jtCantPersonas.getText());
+        cantcamas = Integer.parseInt(jtCantCamas.getText());
+        tipodecama = (String) cbTipoCama.getSelectedItem();
+         precioxnoche = Double.parseDouble(jtPrecioXNoche.getText());
+         
+        TipoDeHabitacion tdh = new TipoDeHabitacion(codigo, tipo, cantmaxpersonas, cantcamas, tipodecama,precioxnoche);
+        tipoDeHabitacionData.guardarTipoDeHabitacion(tdh);
+        JOptionPane.showMessageDialog(null, " El tipo de habitación fue registrado satisfactoriamente ");
+
+        // En blanco los campos de texto y actualiza tabla
+         jtCodigo.setText("");
+        jtPrecioXNoche.setText("");
+        jtCantCamas.setText("");
+        jtCantPersonas.setText("");
+        borrarFilasTabla();
+        cargarDatos();
+        
+    }//GEN-LAST:event_jbGuardarTHActionPerformed
+
+    private void jbBuscarTHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarTHActionPerformed
+        // TODO add your handling code here:
+        
+         String codigo = JOptionPane.showInputDialog("Ingrese Codigo de Habitacion");
+        if(codigo!=null){
+            int cod=Integer.parseInt(codigo);
+            TipoDeHabitacion tipoDeHabitacion = tipoDeHabitacionData.buscarTipoDeHabitacionXCodigo(cod);
+           jtCodigo.setText(tipoDeHabitacion.getCodigo()+"");
+            jtPrecioXNoche.setText(tipoDeHabitacion.getPrecioxnoche()+"");
+             jtCantCamas.setText(tipoDeHabitacion.getCantcamas()+"");
+            jtCantPersonas.setText(tipoDeHabitacion.getCantmaxpersonas()+"");
+            tipo=tipoDeHabitacion.getTipo();
+            id_tipodehabitacion=tipoDeHabitacion.getId_tipodehabitacion();
+            tipodecama=tipoDeHabitacion.getTipodecama();
+            cbTipoCama.setSelectedItem(tipodecama);
+            cbTipoDeHab.setSelectedItem(tipo);
+        }
+        
+        
+        
+    }//GEN-LAST:event_jbBuscarTHActionPerformed
+
+    private void jbActualizarPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbActualizarPrecioActionPerformed
+        // TODO add your handling code here:
+        if (jtCodigo.getText().equals("")|| jtCantCamas.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Debe Buscar un Tipo de Habitacion primero!!!");
+        }else{
+            tipo = (String) cbTipoDeHab.getSelectedItem();
+            precioxnoche = Double.parseDouble(JOptionPane.showInputDialog("Ingrese nuevo Precio"));
+             jtPrecioXNoche.setText(precioxnoche+"");
+            cantmaxpersonas = Integer.parseInt(jtCantPersonas.getText());
+            cantcamas = Integer.parseInt(jtCantCamas.getText());
+            tipodecama = (String) cbTipoCama.getSelectedItem();
+            codigo=Integer.parseInt( jtCodigo.getText());
+        }        
+        if (codigo!=0) {
+        // actualiza precio     
+           TipoDeHabitacion tdh = new TipoDeHabitacion( codigo, tipo, cantmaxpersonas, cantcamas, tipodecama,precioxnoche);
+            tipoDeHabitacionData.actualizarTipoDeHabitacion(tdh);
+            JOptionPane.showMessageDialog(null, " Datos Actualizado ");
+            
+
+        // En blanco los campos de texto y actualiza tabla
+        jtCodigo.setText("");
+        jtPrecioXNoche.setText("");
+        jtCantCamas.setText("");
+        jtCantPersonas.setText("");
+        borrarFilasTabla();
+        cargarDatos();
+        }
+    }//GEN-LAST:event_jbActualizarPrecioActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbTipoCama;
@@ -196,7 +355,6 @@ public class TipoDeHabitacion extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JButton jbActualizarPrecio;
     private javax.swing.JButton jbBuscarTH;
     private javax.swing.JButton jbGuardarTH;
@@ -204,5 +362,6 @@ public class TipoDeHabitacion extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jtCantPersonas;
     private javax.swing.JTextField jtCodigo;
     private javax.swing.JTextField jtPrecioXNoche;
+    private javax.swing.JTable tblTiposHabitaciones;
     // End of variables declaration//GEN-END:variables
 }

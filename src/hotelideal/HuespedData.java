@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,7 +24,11 @@ public class HuespedData {
      Connection con=null;
 
     public  HuespedData (Conexion conexion) {
-      con= conexion.getConexion();//obtengo la conexion a la base de datos
+         try {
+             con= conexion.getConexion();//obtengo la conexion a la base de datos
+         } catch (SQLException ex) {
+             Logger.getLogger(HuespedData.class.getName()).log(Level.SEVERE, null, ex);
+         }
     
 }
     
@@ -71,7 +77,7 @@ public class HuespedData {
                 huesped.setDni(resultSet.getInt("dni"));
                 huesped.setDomicilio(resultSet.getString("domicilio"));
                 huesped.setCorreo(resultSet.getString("correo"));
-                huesped.setCelular(resultSet.getInt("celular"));
+                huesped.setCelular(resultSet.getLong("celular"));
     
                 huespedes.add(huesped);
             }      
@@ -129,7 +135,7 @@ public class HuespedData {
             statement.setInt(2, huesped.getDni());
             statement.setString(3, huesped.getDomicilio());
             statement.setString(4, huesped.getCorreo());
-            statement.setInt(5, huesped.getCelular());
+            statement.setLong(5, huesped.getCelular());
             statement.setInt(6, huesped.getId_huesped());
             statement.executeUpdate();
     
@@ -159,7 +165,7 @@ public class HuespedData {
                 huesped.setDni(resultSet.getInt("dni"));
                 huesped.setDomicilio(resultSet.getString("domicilio"));
                 huesped.setCorreo(resultSet.getString("correo"));
-                huesped.setCelular(resultSet.getInt("celular"));
+                huesped.setCelular(resultSet.getLong("celular"));
                 
             }      
             statement.close();
@@ -189,7 +195,7 @@ public class HuespedData {
                 huesped.setDni(resultSet.getInt("dni"));
                 huesped.setDomicilio(resultSet.getString("domicilio"));
                 huesped.setCorreo(resultSet.getString("correo"));
-                huesped.setCelular(resultSet.getInt("celular"));
+                huesped.setCelular(resultSet.getLong("celular"));
                 
             }      
             statement.close();

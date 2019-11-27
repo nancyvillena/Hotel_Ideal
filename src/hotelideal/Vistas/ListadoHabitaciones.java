@@ -5,17 +5,85 @@
  */
 package hotelideal.Vistas;
 
+import hotelideal.Conexion;
+import hotelideal.Habitacion;
+import hotelideal.HabitacionData;
+import java.util.ArrayList;
+import hotelideal.ModelaTabla;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nancy
  */
 public class ListadoHabitaciones extends javax.swing.JInternalFrame {
-
+private DefaultTableModel modelo;
+    private ArrayList<Habitacion> listaHabitaciones;
+    private HabitacionData habitacionData;
+    private Conexion conexion;
+    public static String tipo;
     /**
      * Creates new form ListadoHabitaciones
      */
     public ListadoHabitaciones() {
+    try {
         initComponents();
+        
+        conexion=new Conexion("jdbc:mysql://localhost/hotelideal1","root","");
+        habitacionData=new HabitacionData(conexion);
+        modelo=new DefaultTableModel();
+        
+        
+    } catch (ClassNotFoundException ex) {
+        Logger.getLogger(ListadoHabitaciones.class.getName()).log(Level.SEVERE, null, ex);
+    }
+            cabezeraTabla();
+        borrarFilasTabla();
+        cargaDatos();
+    }
+    
+    public void cabezeraTabla(){
+        ArrayList<Object> columnas=new ArrayList<>();
+        columnas.add("Numero");
+        columnas.add("Estado");
+        columnas.add("Piso");
+        columnas.add("Tipo Habitacion");
+        columnas.add("Codigo");
+        columnas.add("Tipo Cama");
+        columnas.add("Nro de Camas");
+        columnas.add("Nro de Personas");
+        columnas.add("Precio por Noche");
+        
+        for (Object it:columnas){
+            modelo.addColumn(it);
+        }
+        tablaHabitaciones.setModel(modelo);
+        ModelaTabla tbl=new ModelaTabla();
+        tbl.modela(tablaHabitaciones);
+    }
+    
+    //******Metodo que borra las filas de la tabla******
+    public void borrarFilasTabla(){
+        int a =modelo.getRowCount()-1;
+        for(int i=a;i>=0;i--){
+            modelo.removeRow(i);
+        }
+    }
+
+    //********Metodo que carga los datos en la tabla********
+    public void cargaDatos(){
+        listaHabitaciones=(ArrayList)habitacionData.obtenerHabitaciones();
+        borrarFilasTabla();
+        for (Habitacion r:listaHabitaciones){
+            String estado;
+            if(r.isEstado()){estado="Libre";}else{estado="Ocupada";}
+            modelo.addRow(new Object[]{r.getNumHabitacion(),estado,r.getPiso()
+            ,r.getId_tipodehabitacion().getTipo(),r.getId_tipodehabitacion().getCodigo(),
+            r.getId_tipodehabitacion().getTipodecama(),r.getId_tipodehabitacion().getCantcamas(),
+            r.getId_tipodehabitacion().getCantmaxpersonas(),r.getId_tipodehabitacion().getPrecioxnoche()});
+        }
     }
 
     /**
@@ -29,7 +97,7 @@ public class ListadoHabitaciones extends javax.swing.JInternalFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaHabitaciones = new javax.swing.JTable();
 
         setClosable(true);
         setIconifiable(true);
@@ -37,7 +105,7 @@ public class ListadoHabitaciones extends javax.swing.JInternalFrame {
 
         jLabel1.setText("LISTADO DE HABITACIONES");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaHabitaciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -48,7 +116,7 @@ public class ListadoHabitaciones extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tablaHabitaciones);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,6 +147,6 @@ public class ListadoHabitaciones extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tablaHabitaciones;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,6 +5,11 @@
  */
 package hotelideal.Vistas;
 
+import hotelideal.Conexion;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author nancy
@@ -14,8 +19,14 @@ public class Menu extends javax.swing.JFrame {
     /**
      * Creates new form Menu
      */
+    
+     
     public Menu() {
+        
+        
         initComponents();
+        
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     /**
@@ -29,18 +40,19 @@ public class Menu extends javax.swing.JFrame {
 
         escritorio = new javax.swing.JDesktopPane();
         jLabel1 = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jmenuInformeXHuesp = new javax.swing.JMenuBar();
+        jmenuHuesp = new javax.swing.JMenu();
+        jmenuRegistrarHuesp = new javax.swing.JMenuItem();
+        jmenuInforXHuesp = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem7 = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
+        jmenuTipoDeHab = new javax.swing.JMenuItem();
+        jmenuGestionHab = new javax.swing.JMenuItem();
+        jmenuListadpDeHab = new javax.swing.JMenuItem();
+        jmenuGestionarReserva = new javax.swing.JMenu();
+        jmenuCrearReserva = new javax.swing.JMenuItem();
+        jmenuGestReser = new javax.swing.JMenuItem();
+        jmenuArchivo = new javax.swing.JMenu();
+        jmenuSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,43 +74,92 @@ public class Menu extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jMenu1.setText("HUESPED");
+        jmenuHuesp.setText("HUESPED");
 
-        jMenuItem1.setText("Registrar Huesped");
-        jMenu1.add(jMenuItem1);
+        jmenuRegistrarHuesp.setText("Registrar Huesped");
+        jmenuRegistrarHuesp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuRegistrarHuespActionPerformed(evt);
+            }
+        });
+        jmenuHuesp.add(jmenuRegistrarHuesp);
 
-        jMenuItem2.setText("Informe por Huesped");
-        jMenu1.add(jMenuItem2);
+        jmenuInforXHuesp.setText("Informe por Huesped");
+        jmenuInforXHuesp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuInforXHuespActionPerformed(evt);
+            }
+        });
+        jmenuHuesp.add(jmenuInforXHuesp);
 
-        jMenuBar1.add(jMenu1);
+        jmenuInformeXHuesp.add(jmenuHuesp);
 
         jMenu2.setText("HABITACIONES");
 
-        jMenuItem3.setText("Tipo de Habitaciones");
-        jMenu2.add(jMenuItem3);
+        jmenuTipoDeHab.setText("Tipo de Habitaciones");
+        jmenuTipoDeHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuTipoDeHabActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jmenuTipoDeHab);
 
-        jMenuItem4.setText("Gestion de Habitaciones ");
-        jMenu2.add(jMenuItem4);
+        jmenuGestionHab.setText("Gestion de Habitaciones ");
+        jmenuGestionHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuGestionHabActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jmenuGestionHab);
 
-        jMenuItem5.setText("Listado de Habitaciones ");
-        jMenu2.add(jMenuItem5);
+        jmenuListadpDeHab.setText("Listado de Habitaciones ");
+        jmenuListadpDeHab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuListadpDeHabActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jmenuListadpDeHab);
 
-        jMenuBar1.add(jMenu2);
+        jmenuInformeXHuesp.add(jMenu2);
 
-        jMenu3.setText("RESERVA");
+        jmenuGestionarReserva.setText("RESERVA");
 
-        jMenuItem6.setText("Crear Reserva");
-        jMenu3.add(jMenuItem6);
+        jmenuCrearReserva.setText("Crear Reserva");
+        jmenuCrearReserva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuCrearReservaActionPerformed(evt);
+            }
+        });
+        jmenuGestionarReserva.add(jmenuCrearReserva);
 
-        jMenuItem7.setText("Gestionar Reserva");
-        jMenu3.add(jMenuItem7);
+        jmenuGestReser.setText("Gestionar Reserva");
+        jmenuGestReser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuGestReserActionPerformed(evt);
+            }
+        });
+        jmenuGestionarReserva.add(jmenuGestReser);
 
-        jMenuBar1.add(jMenu3);
+        jmenuInformeXHuesp.add(jmenuGestionarReserva);
 
-        jMenu4.setText("SALIR");
-        jMenuBar1.add(jMenu4);
+        jmenuArchivo.setText("ARCHIVO");
+        jmenuArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuArchivoActionPerformed(evt);
+            }
+        });
 
-        setJMenuBar(jMenuBar1);
+        jmenuSalir.setText("Salir");
+        jmenuSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmenuSalirActionPerformed(evt);
+            }
+        });
+        jmenuArchivo.add(jmenuSalir);
+
+        jmenuInformeXHuesp.add(jmenuArchivo);
+
+        setJMenuBar(jmenuInformeXHuesp);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -113,6 +174,89 @@ public class Menu extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jmenuRegistrarHuespActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuRegistrarHuespActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        RegistrarHuesped rv= new RegistrarHuesped();
+        rv.setVisible(true);
+        escritorio.add(rv);
+        escritorio.moveToFront(rv);
+    }//GEN-LAST:event_jmenuRegistrarHuespActionPerformed
+
+    private void jmenuInforXHuespActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuInforXHuespActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        InformePorHuesped iph= new InformePorHuesped();
+        iph.setVisible(true);
+        escritorio.add(iph);
+        escritorio.moveToFront(iph);
+    }//GEN-LAST:event_jmenuInforXHuespActionPerformed
+
+    private void jmenuTipoDeHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuTipoDeHabActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        VistaTipoDeHabitacion tdh= new VistaTipoDeHabitacion();
+        tdh.setVisible(true);
+        escritorio.add(tdh);
+        escritorio.moveToFront(tdh);
+    }//GEN-LAST:event_jmenuTipoDeHabActionPerformed
+
+    private void jmenuGestionHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuGestionHabActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        GestionDeHabitaciones gdh= new GestionDeHabitaciones();
+        gdh.setVisible(true);
+        escritorio.add(gdh);
+        escritorio.moveToFront(gdh);
+    }//GEN-LAST:event_jmenuGestionHabActionPerformed
+
+    private void jmenuListadpDeHabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuListadpDeHabActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        ListadoHabitaciones lh= new ListadoHabitaciones();
+        lh.setVisible(true);
+        escritorio.add(lh);
+        escritorio.moveToFront(lh);
+    }//GEN-LAST:event_jmenuListadpDeHabActionPerformed
+
+    private void jmenuCrearReservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuCrearReservaActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        CrearReserva cr= new CrearReserva();
+        cr.setVisible(true);
+        escritorio.add(cr);
+        escritorio.moveToFront(cr);
+    }//GEN-LAST:event_jmenuCrearReservaActionPerformed
+
+    private void jmenuGestReserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuGestReserActionPerformed
+        // TODO add your handling code here:
+        escritorio.removeAll();
+        escritorio.repaint();
+        GestionDeReservas gr= new GestionDeReservas();
+        gr.setVisible(true);
+        escritorio.add(gr);
+        escritorio.moveToFront(gr);
+    }//GEN-LAST:event_jmenuGestReserActionPerformed
+ 
+    
+    
+    private void jmenuArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuArchivoActionPerformed
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_jmenuArchivoActionPerformed
+
+    private void jmenuSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmenuSalirActionPerformed
+        // TODO add your handling code here:
+        System.exit(1);
+    }//GEN-LAST:event_jmenuSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -152,17 +296,18 @@ public class Menu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane escritorio;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenu jmenuArchivo;
+    private javax.swing.JMenuItem jmenuCrearReserva;
+    private javax.swing.JMenuItem jmenuGestReser;
+    private javax.swing.JMenuItem jmenuGestionHab;
+    private javax.swing.JMenu jmenuGestionarReserva;
+    private javax.swing.JMenu jmenuHuesp;
+    private javax.swing.JMenuItem jmenuInforXHuesp;
+    private javax.swing.JMenuBar jmenuInformeXHuesp;
+    private javax.swing.JMenuItem jmenuListadpDeHab;
+    private javax.swing.JMenuItem jmenuRegistrarHuesp;
+    private javax.swing.JMenuItem jmenuSalir;
+    private javax.swing.JMenuItem jmenuTipoDeHab;
     // End of variables declaration//GEN-END:variables
 }
